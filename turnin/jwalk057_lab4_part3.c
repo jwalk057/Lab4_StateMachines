@@ -29,9 +29,9 @@ void Tick_LoHi() {
          }
          break;
       case SM1_Lock:
-         else {
-            SM1_STATE = SM1_Lock;
-         }
+ 
+            SM1_STATE = SM1_s0;
+         
          break;
       case SM1_s0:
          if (PINA == 0x04) {
