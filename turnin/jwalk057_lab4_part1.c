@@ -26,10 +26,10 @@ void Tick_LoHi() {
          }
          break;
       case SM1_Wait1:
-         if (!A0) {
+         if (!(PINA == 0x01)) {
             SM1_STATE = SM1_Wait1;
          }
-         else if (A0) {
+         else if (PINA == 0x01) {
             SM1_STATE = SM1_B1;
          }
          else {
@@ -37,10 +37,10 @@ void Tick_LoHi() {
          }
          break;
       case SM1_B1:
-         if (A0) {
+         if (PINA == 0x01) {
             SM1_STATE = SM1_B1;
          }
-         else if (!A0) {
+         else if (!(PINA == 0x01)) {
             SM1_STATE = SM1_Wait2;
          }
          else {
@@ -48,10 +48,10 @@ void Tick_LoHi() {
          }
          break;
       case SM1_Wait2:
-         if (!A0) {
+         if (!(PINA == 0x01)) {
             SM1_STATE = SM1_Wait2;
          }
-         else if (A0) {
+         else if (PINA == 0x01) {
             SM1_STATE = SM1_B0;
          }
          else {
@@ -59,10 +59,10 @@ void Tick_LoHi() {
          }
          break;
       case SM1_B0:
-         if (A0) {
+         if (PINA == 0x01) {
             SM1_STATE = SM1_B0;
          }
-         else if (!A0) {
+         else if (!(PINA == 0x01)) {
             SM1_STATE = SM1_Wait1;
          }
          else {
@@ -78,22 +78,18 @@ void Tick_LoHi() {
          
          break;
       case SM1_Start:
-         B0=1;
-B1=0;
+		   PORTB = 0x01;
          break;
       case SM1_Wait1:
-         
          break;
       case SM1_B1:
-         B0=0;
-B1=1;
+ 		PORTB = 0x02;
          break;
       case SM1_Wait2:
-         
+  
          break;
       case SM1_B0:
-         B0=1;
-B1=0;
+	 PORTB = 0x01;
          break;
    }
 }
