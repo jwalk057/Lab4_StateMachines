@@ -99,7 +99,7 @@ int main(void) {
 	DDRA = 0x00;	PORTA = 0x00;
 	DDRB = 0xFF;	PORTB = 0x00;
     /* Insert your solution below */
-	sm1 = SM_Start;		
+	SM1_STATE = SM1_SMStart;		
     while (1) {
 	Tick_LoHi();
     }
