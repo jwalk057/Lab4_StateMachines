@@ -12,37 +12,91 @@
 #include "simAVRHeader.h"
 #endif
 
-enum SM {SM_Start, SM_WaitB0, SM_B1, SM_WaitB1} sm1;
-        unsigned char tmpB =0x00;
-        void Tick(){
-                switch(sm1){
-                        case SM_Start:
-                                if(PINA == 0x01){sm1 = SM_Start;}
-                                else{sm1 = SM_WaitB0;}
-                                tmpB = 0x01;
-                                PORTB = tmpB;
-                                break;
-
-                        case SM_WaitB0:
-                                if(PINA == 0x01){sm1 = SM_B1;}
-                                else{sm1 = SM_WaitB0;}
-                                break;
-
-                        case SM_B1:
-                                if(PINA == 0x01){sm1 = SM_B1;}
-                                else{sm1 = SM_WaitB1;}
-                                tmpB = 0x02;
-                                PORTB = tmpB;
-                                break;
-
-                        case SM_WaitB1:
-                                if(PINA == 0x01){sm1 = SM_Start;}
-                                else{sm1 = SM_WaitB0;}
-				break;
-                }
-
-        }
-
+enum SM1_STATES { SM1_SMStart, SM1_Start, SM1_Wait1, SM1_B1, SM1_Wait2, SM1_B0} SM1_STATE;
+void Tick_LoHi() { 
+   switch(SM1_STATE) { 
+      case SM1_SMStart:
+         if (1) {
+            SM1_STATE = SM1_Start;
+         }
+         break;
+      case SM1_Start:
+         if (1) {
+            SM1_STATE = SM1_Wait1;
+         }
+         break;
+      case SM1_Wait1:
+         if (!A0) {
+            SM1_STATE = SM1_Wait1;
+         }
+         else if (A0) {
+            SM1_STATE = SM1_B1;
+         }
+         else {
+            SM1_STATE = SM1_Wait1;
+         }
+         break;
+      case SM1_B1:
+         if (A0) {
+            SM1_STATE = SM1_B1;
+         }
+         else if (!A0) {
+            SM1_STATE = SM1_Wait2;
+         }
+         else {
+            SM1_STATE = SM1_B1;
+         }
+         break;
+      case SM1_Wait2:
+         if (!A0) {
+            SM1_STATE = SM1_Wait2;
+         }
+         else if (A0) {
+            SM1_STATE = SM1_B0;
+         }
+         else {
+            SM1_STATE = SM1_Wait2;
+         }
+         break;
+      case SM1_B0:
+         if (A0) {
+            SM1_STATE = SM1_B0;
+         }
+         else if (!A0) {
+            SM1_STATE = SM1_Wait1;
+         }
+         else {
+            SM1_STATE = SM1_B0;
+         }
+         break;
+      default:
+         SM1_STATE = SM1_Start;
+         break;
+   }
+   switch(SM1_STATE) { 
+      case SM1_SMStart:
+         
+         break;
+      case SM1_Start:
+         B0=1;
+B1=0;
+         break;
+      case SM1_Wait1:
+         
+         break;
+      case SM1_B1:
+         B0=0;
+B1=1;
+         break;
+      case SM1_Wait2:
+         
+         break;
+      case SM1_B0:
+         B0=1;
+B1=0;
+         break;
+   }
+}
 
 int main(void) {
     /* Insert DDR and PORT initializations */
@@ -51,7 +105,7 @@ int main(void) {
     /* Insert your solution below */
 	sm1 = SM_Start;		
     while (1) {
-	Tick();
+	Tick_LoHi();
     }
     return 1;
 }
