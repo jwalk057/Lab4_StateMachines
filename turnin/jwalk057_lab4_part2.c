@@ -12,7 +12,7 @@
 #include "simAVRHeader.h"
 #endif
 unsigned char tmpC = 0x00;
-enum SM1_STATES { SM1_SMStart, SM1_Start, SM1_Inc, SM1_Dec, SM1_Rst} SM1_STATE;
+enum SM1_STATES { SM1_SMStart, SM1_Start, SM1_Inc, SM1_Dec, SM1_Rst, SM1_Wait} SM1_STATE;
 void Tick_LoHi() { 
    switch(SM1_STATE) { 
       case SM1_SMStart:
@@ -36,23 +36,31 @@ void Tick_LoHi() {
          break;
       case SM1_Inc:
          if (1) {
-            SM1_STATE = SM1_Start;
-         }
-         else if (PINA == 0x03) {
-            SM1_STATE = SM1_Rst;
+            SM1_STATE = SM1_Wait;
          }
          break;
       case SM1_Dec:
-         if (PINA == 0x03) {
-            SM1_STATE = SM1_Rst;
-         }
-         else {
-            SM1_STATE = SM1_Dec;
+         if (1) {
+            SM1_STATE = SM1_Wait;
          }
          break;
       case SM1_Rst:
-          if (1) {
+         if (1) {
             SM1_STATE = SM1_Start;
+         }
+         break;
+      case SM1_Wait:
+         if (PINA == 0x03) {
+            SM1_STATE = SM1_Rst;
+         }
+         else if (PINA == 0x00) {
+            SM1_STATE = SM1_Start;
+         }
+         else if ((PINA == 0x01)||(PINA == 0x02)) {
+            SM1_STATE = SM1_Wait;
+         }
+         else {
+            SM1_STATE = SM1_Wait;
          }
          break;
       default:
@@ -78,8 +86,12 @@ PORTC = tmpC;
          tmpC = 0;
 PORTC = tmpC;
          break;
+      case SM1_Wait:
+         
+         break;
    }
 }
+
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA=0x00; PORTA=0x00;
